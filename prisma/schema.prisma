@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Menus {
+  id                 Int                   @id @default(autoincrement())
+  name               String
+  price              Int?                  @default(0)
+  isAvailable        Boolean?              @default(true)
+  MenuCategoriesMenu MenuCategoriesMenus[]
+}
+
+model MenuCategories {
+  id                 Int                   @id @default(autoincrement())
+  name               String
+  MenuCategoriesMenu MenuCategoriesMenus[]
+}
+
+model MenuCategoriesMenus {
+  id             Int            @id @default(autoincrement())
+  menuId         Int
+  menu           Menus          @relation(fields: [menuId], references: [id])
+  menuCategoryId Int
+  MenuCategory   MenuCategories @relation(fields: [menuCategoryId], references: [id])
+}
