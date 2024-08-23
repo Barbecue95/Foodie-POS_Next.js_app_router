@@ -1,16 +1,6 @@
-"use client";
-import MultiSelect from "@/components/MultiSelect";
-import { config } from "@/config";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-} from "@mui/material";
-import { MenuCategories, MenuCategoriesMenus } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { prisma } from "@/libs/prisma";
+import { Box, Button, TextField } from "@mui/material";
+import { deleteMenuCategory, updateMenuCategory } from "../actions";
 
 interface Props {
   params: {
@@ -18,78 +8,51 @@ interface Props {
   };
 }
 
-export default function MenuUpdate({ params }: Props) {
-  const [menuCategories, setMenuCategories] = useState<MenuCategories>();
-  const router = useRouter();
+export default async function MenuUpdate({ params }: Props) {
   const { id } = params;
-
-  useEffect(() => {
-    if (id) {
-      getMenuCategories();
-    }
-  }, [id]);
-
-  const getMenuCategories = async () => {
-    const response = await fetch(
-      `${config.backOfficeUrl}/menu-categories/${id}`,
-      {
-        headers: { "content-type": "application/json" },
-        method: "GET",
-      },
-    );
-    const dataFromServer = await response.json();
-    const { menuCategories } = dataFromServer;
-    setMenuCategories(menuCategories);
-  };
-
-  const handleUpdaeMenuCategories = async () => {
-    const SentData = await fetch(`${config.backOfficeUrl}/menu-categories`, {
-      headers: { "content-type": "application/json" },
-      method: "PUT",
-      body: JSON.stringify(menuCategories),
-    });
-    console.log("MenuCategories: ", SentData);
-    router.push("/backoffice/menu-categories");
-  };
-
-  const deleteMenuCategories = async () => {
-    await fetch(`${config.backOfficeUrl}/menu-categories/${id}`, {
-      method: "DELETE",
-    });
-    router.push("/backoffice/menu-categories");
-  };
+  const menuCategories = await prisma.menuCategories.findFirst({
+    where: { id: Number(id) },
+  });
 
   if (!menuCategories) return null;
-
   return (
     <>
-      <h1 style={{ marginBottom: 10 }}>New Menu Page</h1>
-      <Box sx={{ display: "flex", flexDirection: "column", width: 300 }}>
+      <h1 style={{ marginBottom: 10 }}>Update MenuCategories Page</h1>
+      <Box
+        component={"form"}
+        action={updateMenuCategory}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: 300,
+          marginBottom: 1,
+          position: "absolute",
+        }}
+      >
         <TextField
           sx={{ mb: 2 }}
-          value={menuCategories.name}
-          onChange={(evt) =>
-            setMenuCategories({ ...menuCategories, name: evt.target.value })
-          }
+          defaultValue={menuCategories.name}
+          name="menuCategoryName"
         />
-
-        <Box sx={{ display: "flex", gap: 15 }}>
-          <Button
-            variant="contained"
-            sx={{ width: 100 }}
-            onClick={handleUpdaeMenuCategories}
-          >
-            Update
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ width: 100 }}
-            onClick={deleteMenuCategories}
-          >
-            Delete
-          </Button>
-        </Box>
+        <input type="hidden" value={id} name="menuCategoryId" />
+        <Button type="submit" variant="contained" sx={{ width: 100 }}>
+          Update
+        </Button>
+      </Box>
+      <Box
+        sx={{ textAlign: "center", width: 500, mt: 10.3 }}
+        component={"form"}
+        action={deleteMenuCategory}
+      >
+        <Button
+          type="submit"
+          variant="contained"
+          color="error"
+          sx={{ width: 100 }}
+        >
+          <input type="hidden" value={id} name="menuCategoryId" />
+          Delete
+        </Button>
       </Box>
     </>
   );

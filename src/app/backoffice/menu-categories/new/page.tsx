@@ -1,47 +1,27 @@
-"use client";
-import { config } from "@/config";
 import { Box, Button, TextField } from "@mui/material";
-import { MenuCategories } from "@prisma/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { createMenuCategory } from "../actions";
 
-export default function NewMenuPage() {
-  const defaultMenuCategories = { name: "" };
-  const [newMenuCategory, setNewMenuCategory] = useState<
-    Partial<MenuCategories>
-  >(defaultMenuCategories);
-  const router = useRouter();
-
-  const handleCreateMenu = async () => {
-    const isValid = newMenuCategory.name;
-    if (!isValid) return alert("Fill in the blanks");
-    await fetch(`${config.backOfficeUrl}/menu-categories`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(newMenuCategory),
-    });
-    router.push("/backoffice/menu-categories");
-  };
-
+export default function NewMenuCategoryPage() {
   return (
-    <>
-      <h1 style={{ marginBottom: 10 }}>Create New Menu</h1>
-      <Box sx={{ display: "flex", flexDirection: "column", width: 300 }}>
-        <TextField
-          placeholder="Name"
-          sx={{ mb: 2 }}
-          onChange={(evt) =>
-            setNewMenuCategory({ ...newMenuCategory, name: evt.target.value })
-          }
-        />
-        <Button
-          variant="contained"
-          sx={{ width: 100 }}
-          onClick={handleCreateMenu}
-        >
-          Create
-        </Button>
-      </Box>
-    </>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: 500,
+      }}
+      component={"form"}
+      action={createMenuCategory}
+    >
+      <h1 style={{ marginBottom: 20 }}>Create New MenuCategory</h1>
+      <TextField
+        placeholder="Name"
+        sx={{ mb: 2 }}
+        defaultValue={""}
+        name="menuCategoryName"
+      />
+      <Button variant="contained" sx={{ width: 100 }} type="submit">
+        Create
+      </Button>
+    </Box>
   );
 }
