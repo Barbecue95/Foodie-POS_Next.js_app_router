@@ -1,11 +1,6 @@
 import { prisma } from "@/libs/prisma";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const menus = await prisma.menus.findMany();
-  return NextResponse.json({ menus }, { status: 200 });
-}
-
 export async function POST(req: Request) {
   const menu = await req.json();
   const { name, price, isAvailable, menuCategoryIds } = menu;
@@ -44,7 +39,7 @@ export async function PUT(req: Request) {
     where: { menuId: id },
   });
   const menuMenuCategoryIds = menuCategoriesMenus.map(
-    (item) => item.menuCategoryId,
+    (item) => item.menuCategoryId
   );
   const isSame =
     menuCategoryIds.length === menuMenuCategoryIds.length &&

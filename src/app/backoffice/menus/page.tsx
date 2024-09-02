@@ -1,51 +1,32 @@
-"use client";
-
 import MenuCard from "@/components/MenuCards";
-import { config } from "@/config";
+import { prisma } from "@/libs/prisma";
 import { Box, Button } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 
-export interface Menus {
-  id: number;
-  name: string;
-  price: number;
-  isAvailable: boolean;
-}
-
-export default function Menus() {
-  const [menus, setMenus] = useState<Menus[]>([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    getMenus();
-  }, []);
-
-  const getMenus = async () => {
-    const response = await fetch(`${config.backOfficeUrl}/menus`);
-    const dataFromServer = await response.json();
-    const { menus } = dataFromServer;
-    setMenus(menus);
-  };
+export default async function MenusPage() {
+  const menus = await prisma.menus.findMany();
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
-        <h1>Menus</h1>
-        <Button
-          variant="contained"
-          onClick={() => router.push("/backoffice/menus/new")}
-        >
-          Create New Menu
-        </Button>
-      </Box>
       <Box
         sx={{
           display: "flex",
-          flexWrap: "wrap",
-          gap: 3,
+          justifyContent: "flex-end",
         }}
       >
+        <Link href={"/backoffice/menus/new"}>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#1D3557",
+              "&:hover": { bgcolor: "#2d4466" },
+            }}
+          >
+            New menu
+          </Button>
+        </Link>
+      </Box>
+      <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap" }}>
         {menus.map((menu) => (
           <MenuCard key={menu.id} menu={menu} />
         ))}
