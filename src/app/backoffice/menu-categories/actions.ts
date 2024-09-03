@@ -8,23 +8,23 @@ export async function getMenuCategories() {
 }
 
 export async function updateMenuCategory(formData: FormData) {
-  const menuCategoryName = formData.get("menuCategoryName") as string;
-  const menuCategoryId = formData.get("menuCategoryId");
+  const name = formData.get("name") as string;
+  const id = formData.get("id");
   await prisma.menuCategories.update({
-    data: { name: menuCategoryName },
-    where: { id: Number(menuCategoryId) },
+    data: { name },
+    where: { id: Number(id) },
   });
   redirect("/backoffice/menu-categories");
 }
 
 export async function createMenuCategory(formData: FormData) {
-  const newMenuCategory = formData.get("menuCategoryName") as string;
-  await prisma.menuCategories.create({ data: { name: newMenuCategory } });
+  const name = formData.get("name") as string;
+  await prisma.menuCategories.create({ data: { name } });
   redirect("/backoffice/menu-categories");
 }
 
 export async function deleteMenuCategory(formData: FormData) {
-  const menuCategoryId = formData.get("menuCategoryId");
-  await prisma.menuCategories.delete({ where: { id: Number(menuCategoryId) } });
+  const id = formData.get("id");
+  await prisma.menuCategories.delete({ where: { id: Number(id) } });
   redirect("/backoffice/menu-categories");
 }

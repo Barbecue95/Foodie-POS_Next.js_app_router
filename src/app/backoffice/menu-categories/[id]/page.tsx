@@ -34,7 +34,7 @@ export default async function MenuUpdate({ params }: Props) {
           defaultValue={menuCategories.name}
           name="menuCategoryName"
         />
-        <input type="hidden" value={id} name="menuCategoryId" />
+        <input type="hidden" value={id} name="id" />
         <Button type="submit" variant="contained" sx={{ width: 100 }}>
           Update
         </Button>
@@ -50,7 +50,7 @@ export default async function MenuUpdate({ params }: Props) {
           color="error"
           sx={{ width: 100 }}
         >
-          <input type="hidden" value={id} name="menuCategoryId" />
+          <input type="hidden" value={id} name="id" />
           Delete
         </Button>
       </Box>

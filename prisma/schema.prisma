@@ -19,6 +19,7 @@ model Menus {
   price              Int?                  @default(0)
   isAvailable        Boolean?              @default(true)
   MenuCategoriesMenu MenuCategoriesMenus[]
+  menusAddonCategories MenusAddonCategories[]
 }
 
 model MenuCategories {
@@ -34,3 +35,30 @@ model MenuCategoriesMenus {
   menuCategoryId Int
   MenuCategory   MenuCategories @relation(fields: [menuCategoryId], references: [id])
 }
+
+model AddonCategories {
+  id Int @id @default(autoincrement())
+  name String
+  isRequired Boolean @default(false)
+  menusAdddonCategories MenusAddonCategories[]
+  addons Addons[]
+}
+
+model MenusAddonCategories {
+  id Int @id @default(autoincrement())
+  menuId Int
+  menu Menus @relation(fields: [menuId], references: [id])
+  addonCategoryId Int
+  addonCategory AddonCategories @relation(fields: [addonCategoryId], references: [id])
+}
+
+model Addons {
+  id Int @id @default(autoincrement())
+  name String
+  price Int
+  isAvailable Boolean @default(true)
+  addonCategoryId Int 
+  addonCategory AddonCategories @relation(fields: [addonCategoryId], references: [id])
+}
+
+

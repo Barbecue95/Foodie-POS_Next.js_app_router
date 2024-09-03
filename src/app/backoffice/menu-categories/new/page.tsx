@@ -17,7 +17,7 @@ export default function NewMenuCategoryPage() {
         placeholder="Name"
         sx={{ mb: 2 }}
         defaultValue={""}
-        name="menuCategoryName"
+        name="name"
       />
       <Button variant="contained" sx={{ width: 100 }} type="submit">
         Create
