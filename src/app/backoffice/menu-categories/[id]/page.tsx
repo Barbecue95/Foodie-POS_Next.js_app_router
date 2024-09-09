@@ -32,7 +32,7 @@ export default async function MenuUpdate({ params }: Props) {
         <TextField
           sx={{ mb: 2 }}
           defaultValue={menuCategories.name}
-          name="menuCategoryName"
+          name="name"
         />
         <input type="hidden" value={id} name="id" />
         <Button type="submit" variant="contained" sx={{ width: 100 }}>

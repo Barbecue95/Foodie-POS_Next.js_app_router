@@ -3,15 +3,11 @@
 import { prisma } from "@/libs/prisma";
 import { redirect } from "next/navigation";
 
-export async function getMenuCategories() {
-  return await prisma.menuCategories.findMany();
-}
-
 export async function updateMenuCategory(formData: FormData) {
   const name = formData.get("name") as string;
   const id = formData.get("id");
   await prisma.menuCategories.update({
-    data: { name },
+    data: { name: name },
     where: { id: Number(id) },
   });
   redirect("/backoffice/menu-categories");

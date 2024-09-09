@@ -1,3 +1,4 @@
+import { getCompanyMenuCategories } from "@/libs/action";
 import {
   Box,
   Button,
@@ -6,11 +7,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { getMenuCategories } from "../../menu-categories/actions";
 import { createMenu } from "../actions";
 
 export default async function NewMenuPage() {
-  const menuCategories = await getMenuCategories();
+  const menuCategories = await getCompanyMenuCategories();
 
   return (
     <>

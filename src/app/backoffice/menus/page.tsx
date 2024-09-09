@@ -1,10 +1,10 @@
 import MenuCard from "@/components/MenuCards";
-import { prisma } from "@/libs/prisma";
+import { getCompanyMenus } from "@/libs/action";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
 export default async function MenusPage() {
-  const menus = await prisma.menus.findMany();
+  const menus = await getCompanyMenus();
 
   return (
     <>
