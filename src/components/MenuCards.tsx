@@ -1,3 +1,4 @@
+import { getSelectedLocations } from "@/libs/action";
 import {
   Box,
   Card,
@@ -6,17 +7,23 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
-import { Menus } from "@prisma/client";
 import Link from "next/link";
 
 interface Props {
-  menu: Menus;
-  isAvailable: boolean;
+  menu: any;
 }
 
-export default function MenuCard({ menu, isAvailable }: Props) {
+export default async function MenuCard({ menu }: Props) {
+  const selectedLocation = await getSelectedLocations();
+  console.log(selectedLocation);
   const { name, price } = menu;
-  console.log(menu);
+  const disabledLocationMenus = menu.disabledLocationMenus[0];
+  const isAvailable =
+    disabledLocationMenus &&
+    disabledLocationMenus.locationId === selectedLocation?.locationId
+      ? false
+      : true;
+  console.log(isAvailable);
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}

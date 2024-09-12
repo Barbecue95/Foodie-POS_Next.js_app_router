@@ -95,6 +95,7 @@ model Locations {
 model Tables {
   id         Int       @id @default(autoincrement())
   name       String
+  qrCodeImageUrl String
   locationId Int
   location   Locations @relation(fields: [locationId], references: [id])
 }
@@ -104,7 +105,7 @@ model SelectedLocations {
   userId      Int
   user        Users     @relation(fields: [userId], references: [id])
   locationId  Int
-  locLinktion Locations @relation(fields: [locationId], references: [id])
+  location Locations @relation(fields: [locationId], references: [id])
 }
 
 model DisabledLocationMenuCategories {

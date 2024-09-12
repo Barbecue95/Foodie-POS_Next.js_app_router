@@ -1,5 +1,12 @@
+import { getSelectedLocations } from "@/libs/action";
 import { prisma } from "@/libs/prisma";
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+} from "@mui/material";
 import { deleteMenuCategory, updateMenuCategory } from "../actions";
 
 interface Props {
@@ -8,11 +15,18 @@ interface Props {
   };
 }
 
-export default async function MenuUpdate({ params }: Props) {
+export default async function MenuCategoriesUpdatePage({ params }: Props) {
   const { id } = params;
+  const selectedLocation = await getSelectedLocations();
   const menuCategories = await prisma.menuCategories.findFirst({
     where: { id: Number(id) },
+    include: { disabledLocationMenuCategories: true },
   });
+  const isAvailable = menuCategories?.disabledLocationMenuCategories.find(
+    (item) => item.locationId === selectedLocation?.locationId
+  )
+    ? false
+    : true;
 
   if (!menuCategories) return null;
   return (
@@ -30,9 +44,15 @@ export default async function MenuUpdate({ params }: Props) {
         }}
       >
         <TextField
-          sx={{ mb: 2 }}
+          sx={{ mb: 1 }}
           defaultValue={menuCategories.name}
           name="name"
+        />
+        <FormControlLabel
+          control={<Checkbox defaultChecked={isAvailable} />}
+          label="Available"
+          name="isAvailable"
+          sx={{ width: 100 }}
         />
         <input type="hidden" value={id} name="id" />
         <Button type="submit" variant="contained" sx={{ width: 100 }}>
@@ -40,7 +60,7 @@ export default async function MenuUpdate({ params }: Props) {
         </Button>
       </Box>
       <Box
-        sx={{ textAlign: "center", width: 500, mt: 10.3 }}
+        sx={{ textAlign: "center", width: 500, mt: 14.3 }}
         component={"form"}
         action={deleteMenuCategory}
       >

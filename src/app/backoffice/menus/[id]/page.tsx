@@ -1,4 +1,4 @@
-import { getCompanyMenuCategories } from "@/libs/action";
+import { getCompanyMenuCategories, getSelectedLocations } from "@/libs/action";
 import {
   Box,
   Button,
@@ -17,9 +17,10 @@ interface Props {
 
 export default async function MenuUpdatePage({ params }: Props) {
   const { id } = params;
+  const selectedLocation = await getSelectedLocations();
   const menu = await getMenu(Number(id));
   const isAvailable = menu.disabledLocationMenus.find(
-    (item) => item.menuId === menu.id
+    (item) => item.locationId === selectedLocation?.locationId
   )
     ? false
     : true;
@@ -77,12 +78,7 @@ export default async function MenuUpdatePage({ params }: Props) {
           </Box>
         </Box>
         <FormControlLabel
-          control={
-            <Checkbox
-              defaultChecked={isAvailable}
-              defaultValue={String(isAvailable)}
-            />
-          }
+          control={<Checkbox defaultChecked={isAvailable} />}
           label="Available"
           name="isAvailable"
         />
