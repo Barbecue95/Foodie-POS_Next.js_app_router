@@ -1,8 +1,13 @@
-import { getCompanyLocations } from "@/libs/action";
-import LocationSignOut from "./LocationSignOut";
+import { getSelectedLocations } from "@/libs/action";
+import { prisma } from "@/libs/prisma";
+import LocationSignOut from "./SignOutButton";
 
 export async function TopBar() {
-  const locations = await getCompanyLocations();
+  const selectedLocation = await getSelectedLocations();
+  const location = await prisma.locations.findFirst({
+    where: { id: selectedLocation?.locationId },
+  });
+
   return (
     <div
       style={{
@@ -16,10 +21,9 @@ export async function TopBar() {
         padding: "0 20px",
       }}
     >
-      <div>
-        <h4>Foodie POS</h4>
-      </div>
-      <LocationSignOut locations={locations} />
+      <h4>Foodie POS</h4>
+      <h4>{location?.name}</h4>
+      <LocationSignOut />
     </div>
   );
 }

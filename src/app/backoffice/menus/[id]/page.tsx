@@ -18,6 +18,11 @@ interface Props {
 export default async function MenuUpdatePage({ params }: Props) {
   const { id } = params;
   const menu = await getMenu(Number(id));
+  const isAvailable = menu.disabledLocationMenus.find(
+    (item) => item.menuId === menu.id
+  )
+    ? false
+    : true;
   const selected = menu?.MenuCategoriesMenu.map((item) => item.menuCategoryId);
   const menuCategories = await getCompanyMenuCategories();
 
@@ -28,7 +33,7 @@ export default async function MenuUpdatePage({ params }: Props) {
         action={deleteMenu}
         sx={{ display: "flex", justifyContent: "flex-end" }}
       >
-        <input hidden value={id} name="id" />
+        <input hidden defaultValue={id} name="id" />
         <Button
           type="submit"
           variant="contained"
@@ -43,7 +48,7 @@ export default async function MenuUpdatePage({ params }: Props) {
         action={updateMenu}
         sx={{ mt: 2, display: "flex", flexDirection: "column" }}
       >
-        <input hidden value={id} name="id" />
+        <input hidden defaultValue={id} name="id" />
         <TextField defaultValue={menu?.name} name="name" />
         <TextField defaultValue={menu?.price} sx={{ my: 2 }} name="price" />
         <Box>
@@ -73,7 +78,10 @@ export default async function MenuUpdatePage({ params }: Props) {
         </Box>
         <FormControlLabel
           control={
-            <Checkbox defaultChecked={menu?.isAvailable ? true : false} />
+            <Checkbox
+              defaultChecked={isAvailable}
+              defaultValue={String(isAvailable)}
+            />
           }
           label="Available"
           name="isAvailable"

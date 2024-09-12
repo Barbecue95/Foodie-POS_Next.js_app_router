@@ -11,10 +11,12 @@ import Link from "next/link";
 
 interface Props {
   menu: Menus;
+  isAvailable: boolean;
 }
 
-export default function MenuCard({ menu }: Props) {
-  const { name, price, isAvailable } = menu;
+export default function MenuCard({ menu, isAvailable }: Props) {
+  const { name, price } = menu;
+  console.log(menu);
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}

@@ -28,7 +28,11 @@ export default async function MenusPage() {
       </Box>
       <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap" }}>
         {menus.map((menu) => (
-          <MenuCard key={menu.id} menu={menu} />
+          <MenuCard
+            key={menu.id}
+            menu={menu}
+            isAvailable={menu.disabledLocationMenus.length === 0 ? true : false}
+          />
         ))}
       </Box>
     </>
