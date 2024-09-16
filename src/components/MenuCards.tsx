@@ -23,7 +23,9 @@ export default async function MenuCard({ menu }: Props) {
     disabledLocationMenus.locationId === selectedLocation?.locationId
       ? false
       : true;
-  console.log(isAvailable);
+  const imageUrl = menu.imageUrl
+    ? menu.imageUrl
+    : "https://images.squarespace-cdn.com/content/v1/5a81c36ea803bb1dd7807778/1610403788186-K2ATWJRYLHVC4ENCZZ7D/Shan+khaut+swe+%28Shan+sticky+noodles%29";
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}
@@ -45,7 +47,7 @@ export default async function MenuCard({ menu }: Props) {
       >
         <CardMedia
           component="img"
-          image="https://images.squarespace-cdn.com/content/v1/5a81c36ea803bb1dd7807778/1610403788186-K2ATWJRYLHVC4ENCZZ7D/Shan+khaut+swe+%28Shan+sticky+noodles%29"
+          image={imageUrl}
           alt="Menu Item"
           sx={{
             width: "100%",

@@ -17,6 +17,7 @@ model Menus {
   id                    Int                     @id @default(autoincrement())
   name                  String
   price                 Int                     @default(0)
+  imageUrl              String?
   MenuCategoriesMenu    MenuCategoriesMenus[]
   menusAddonCategories  MenusAddonCategories[]
   disabledLocationMenus DisabledLocationMenus[]
