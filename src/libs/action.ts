@@ -81,7 +81,7 @@ export async function getDbUserId() {
 export async function getCompanyMenuCategories() {
   const companyId = await getCompanyId();
   return await prisma.menuCategories.findMany({
-    where: { companyId },
+    where: { companyId, isArchived: false },
     include: { disabledLocationMenuCategories: true },
   });
 }

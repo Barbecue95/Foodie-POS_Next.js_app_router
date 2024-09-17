@@ -15,7 +15,6 @@ interface Props {
 
 export default async function MenuCard({ menu }: Props) {
   const selectedLocation = await getSelectedLocations();
-  console.log(selectedLocation);
   const { name, price } = menu;
   const disabledLocationMenus = menu.disabledLocationMenus[0];
   const isAvailable =

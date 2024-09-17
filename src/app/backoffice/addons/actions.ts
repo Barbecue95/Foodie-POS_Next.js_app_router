@@ -51,6 +51,6 @@ export async function updateAddon(formData: FormData) {
 
 export async function deleteAddon(formData: FormData) {
   const id = Number(formData.get("id"));
-  await prisma.addons.delete({ where: { id } });
+  await prisma.addons.update({ data: { isArchived: true }, where: { id } });
   redirect("/backoffice/menus");
 }

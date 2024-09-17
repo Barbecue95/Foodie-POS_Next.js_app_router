@@ -25,8 +25,6 @@ export async function updateMenuCategory(formData: FormData) {
       await prisma.disabledLocationMenuCategories.findFirst({
         where: { menuCategoryId: Number(id) },
       });
-    console.log(disabledLocationMenuCategories);
-    return;
     if (disabledLocationMenuCategories) {
       await prisma.disabledLocationMenuCategories.delete({
         where: { id: disabledLocationMenuCategories?.id },
@@ -37,10 +35,15 @@ export async function updateMenuCategory(formData: FormData) {
 }
 
 export async function createMenuCategory(formData: FormData) {
-  const name = formData.get("name") as string;
-  await prisma.menuCategories.create({
-    data: { name, companyId: (await getCompanyId()) as number },
-  });
+  try {
+    const name = formData.get("name") as string;
+    await prisma.menuCategories.create({
+      data: { name, companyId: (await getCompanyId()) as number },
+    });
+  } catch (err) {
+    console.log(err);
+    return;
+  }
   redirect("/backoffice/menu-categories");
 }
 
@@ -49,6 +52,9 @@ export async function deleteMenuCategory(formData: FormData) {
   await prisma.disabledLocationMenuCategories.deleteMany({
     where: { menuCategoryId: Number(id) },
   });
-  await prisma.menuCategories.delete({ where: { id: Number(id) } });
+  await prisma.menuCategories.update({
+    data: { isArchived: true },
+    where: { id: Number(id) },
+  });
   redirect("/backoffice/menu-categories");
 }

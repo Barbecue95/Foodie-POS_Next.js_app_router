@@ -34,6 +34,9 @@ export async function deleteAddonCategory(formData: FormData) {
   await prisma.menusAddonCategories.deleteMany({
     where: { addonCategoryId: Number(id) },
   });
-  await prisma.addonCategories.delete({ where: { id: Number(id) } });
+  await prisma.addonCategories.update({
+    data: { isArchived: true },
+    where: { id: Number(id) },
+  });
   redirect("/backoffice/addon-categories");
 }

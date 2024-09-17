@@ -7,10 +7,6 @@ import Link from "next/link";
 export default async function MenuCategoriesPage() {
   const menuCategories = await getCompanyMenuCategories();
   const selectedLocationId = (await getSelectedLocations())?.locationId;
-  console.log(
-    selectedLocationId,
-    menuCategories[0].disabledLocationMenuCategories
-  );
 
   return (
     <>
