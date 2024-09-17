@@ -19,6 +19,11 @@ const FormSchema = z.object({
 });
 
 const createMenuValid = FormSchema.omit({ id: true, isAvailable: true });
+const UpdateMenuValidate = FormSchema.omit({
+  isAvailable: true,
+  imageUrl: true,
+  menuCategoryIds: true,
+});
 const deleteMenuValid = FormSchema.pick({ id: true });
 
 export async function getMenus() {
@@ -84,55 +89,72 @@ export async function createMenu(formData: FormData) {
 }
 
 export async function updateMenu(formData: FormData) {
-  const { id, name, price, isAvailable } = FormSchema.parse({
-    id: formData.get("id"),
-    name: formData.get("name"),
-    price: formData.get("price"),
-    isAvailable: formData.get("isAvailable"),
-  });
-  const menuCategoryIds = formData
-    .getAll("menuCategories")
-    .map((id) => Number(id));
-  await prisma.menus.update({
-    data: { name, price: Number(price) },
-    where: { id: Number(id) },
-  });
-  await prisma.menuCategoriesMenus.deleteMany({
-    where: { menuId: Number(id) },
-  });
-  const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
-    where: { menuId: Number(id) },
-  });
-  const menuMenuCategoryIds = menuCategoriesMenus.map((item) => item.id);
-  const isSame =
-    menuCategoryIds.length === menuMenuCategoryIds.length &&
-    menuCategoryIds.every((itemId: number) =>
-      menuMenuCategoryIds.includes(itemId)
-    );
-  if (!isSame) {
-    const data = menuCategoryIds.map((menuCategoryId) => ({
-      menuId: Number(id),
-      menuCategoryId,
-    }));
-    await prisma.menuCategoriesMenus.createMany({ data });
-  }
-  const selectedLocationId = (await getSelectedLocations())?.locationId;
-  if (!isAvailable) {
-    await prisma.disabledLocationMenus.create({
-      data: {
-        locationId: Number(selectedLocationId),
-        menuId: Number(id),
-      },
+  try {
+    const { id, name, price } = UpdateMenuValidate.parse({
+      id: Number(formData.get("id")),
+      name: formData.get("name"),
+      price: Number(formData.get("price")),
     });
-  } else {
-    const disabledLocationMenus = await prisma.disabledLocationMenus.findFirst({
-      where: { menuId: Number(id) },
-    });
-    if (disabledLocationMenus) {
-      await prisma.disabledLocationMenus.delete({
-        where: { id: disabledLocationMenus?.id },
+    const isAvailable = formData.get("isAvailable");
+    const imageUrl = formData.get("imageUrl") as string;
+    const menuCategoryIds = formData
+      .getAll("menuCategories")
+      .map((item) => Number(item));
+    if (imageUrl) {
+      await prisma.menus.update({
+        data: {
+          name,
+          price: Number(price),
+          imageUrl,
+        },
+        where: { id: Number(id) },
       });
     }
+    await prisma.menus.update({
+      data: { name, price: Number(price) },
+      where: { id: Number(id) },
+    });
+    const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
+      where: { menuId: Number(id) },
+    });
+    const menuMenuCategoryIds = menuCategoriesMenus.map((item) => item.id);
+    const isSame =
+      menuCategoryIds.length === menuMenuCategoryIds.length &&
+      menuCategoryIds.every((itemId: number) =>
+        menuMenuCategoryIds.includes(itemId)
+      );
+    if (!isSame) {
+      const data = menuCategoryIds.map((menuCategoryId) => ({
+        menuId: Number(id),
+        menuCategoryId,
+      }));
+      await prisma.menuCategoriesMenus.createMany({ data });
+    }
+    const selectedLocationId = (await getSelectedLocations())?.locationId;
+    if (!isAvailable) {
+      await prisma.disabledLocationMenus.create({
+        data: {
+          locationId: Number(selectedLocationId),
+          menuId: Number(id),
+        },
+      });
+    } else {
+      const disabledLocationMenus =
+        await prisma.disabledLocationMenus.findFirst({
+          where: { menuId: Number(id) },
+        });
+      if (disabledLocationMenus) {
+        await prisma.disabledLocationMenus.delete({
+          where: { id: disabledLocationMenus?.id },
+        });
+      }
+    }
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const errorMessages = err.errors.map((item) => item.message).join(".");
+      return { error: errorMessages };
+    }
+    return { error: "Something went wrong. Please contact our support." };
   }
   redirect("/backoffice/menus");
 }

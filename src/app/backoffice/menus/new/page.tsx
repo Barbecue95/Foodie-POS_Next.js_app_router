@@ -1,5 +1,5 @@
-import { NewMenuForm } from "@/components/NewMenuForm";
 import { getCompanyMenuCategories } from "@/libs/action";
+import { NewMenuForm } from "./NewMenuForm";
 
 export default async function NewMenuPage() {
   const menuCategories = await getCompanyMenuCategories();
