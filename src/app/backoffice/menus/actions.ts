@@ -6,15 +6,17 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  id: z.number({ message: "Required Id is Missing" }),
+  id: z
+    .number({ message: "Required Id is Missing." })
+    .gt(0, { message: "Id cannot be 0." }),
   name: z
     .string()
-    .min(5, { message: "Name must be at least 5 characters long" }),
-  price: z.number({ message: "Price must be a number" }),
+    .min(5, { message: "Name must be at least 5 characters long." }),
+  price: z.number({ message: "Price must be a number." }),
   isAvailable: z.boolean(),
   menuCategoryIds: z
     .array(z.number())
-    .min(1, { message: "Choose at least 1 menu Cateogry" }),
+    .min(1, { message: "Choose at least 1 menu Cateogry." }),
   imageUrl: z.string(),
 });
 
@@ -80,12 +82,15 @@ export async function createMenu(formData: FormData) {
     } */
   } catch (err) {
     if (err instanceof z.ZodError) {
-      const errorMessages = err.errors.map((item) => item.message).join(".");
-      return { error: errorMessages };
+      return { errors: err.errors };
     }
-    return { error: "Something went wrong. Please contact our support." };
+    return {
+      errors: [
+        { message: "Something went wrong. Please contact our support." },
+      ],
+    };
   }
-  return { error: null };
+  return { errors: null };
 }
 
 export async function updateMenu(formData: FormData) {
@@ -100,16 +105,15 @@ export async function updateMenu(formData: FormData) {
     const menuCategoryIds = formData
       .getAll("menuCategories")
       .map((item) => Number(item));
-    if (imageUrl) {
-      await prisma.menus.update({
-        data: {
-          name,
-          price: Number(price),
-          imageUrl,
-        },
-        where: { id: Number(id) },
-      });
-    }
+    const menu = await prisma.menus.findFirst({ where: { id } });
+    await prisma.menus.update({
+      data: {
+        name,
+        price: Number(price),
+        imageUrl: imageUrl ? imageUrl : menu?.imageUrl,
+      },
+      where: { id: Number(id) },
+    });
     await prisma.menus.update({
       data: { name, price: Number(price) },
       where: { id: Number(id) },
@@ -151,12 +155,15 @@ export async function updateMenu(formData: FormData) {
     }
   } catch (err) {
     if (err instanceof z.ZodError) {
-      const errorMessages = err.errors.map((item) => item.message).join(".");
-      return { error: errorMessages };
+      return { errors: err.errors };
     }
-    return { error: "Something went wrong. Please contact our support." };
+    return {
+      errors: [
+        { message: "Something went wrong. Please contact our support." },
+      ],
+    };
   }
-  redirect("/backoffice/menus");
+  return { errors: null };
 }
 
 export async function deleteMenu(formData: FormData) {

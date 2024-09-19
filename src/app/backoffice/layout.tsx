@@ -16,7 +16,7 @@ export default function BackOfficeLayout({ children }: Props) {
         <SideBar />
         <Box sx={{ p: 2, width: "100%" }}>{children}</Box>
       </Box>
-      <Toaster position="top-center" />
+      <Toaster position="bottom-right" />
     </div>
   );
 }

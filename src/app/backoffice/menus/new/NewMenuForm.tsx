@@ -35,8 +35,8 @@ export function NewMenuForm({ menuCategories }: Props) {
         formData.set("imageUrl", url);
       }
       const response = await createMenu(formData);
-      if (response.error) {
-        toast.error(response.error);
+      if (response.errors) {
+        response.errors.forEach((error) => toast.error(error.message));
       } else {
         toast.success("Menu Created Successfully.");
         router.push("/backoffice/menus");
@@ -53,7 +53,7 @@ export function NewMenuForm({ menuCategories }: Props) {
       <Box
         component={"form"}
         action={handleCreateMenu}
-        sx={{ display: "flex", flexDirection: "column", width: 400 }}
+        sx={{ display: "flex", flexDirection: "column" }}
       >
         <TextField sx={{ mb: 2 }} label="Name" name="name" />
 

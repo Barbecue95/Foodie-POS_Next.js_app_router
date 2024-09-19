@@ -42,8 +42,8 @@ export function UpdateMenuForm({
         formData.set("imageUrl", url);
       }
       const response = await updateMenu(formData);
-      if (response.error) {
-        toast.error(response.error);
+      if (response.errors) {
+        response.errors.forEach((error) => toast.error(error.message));
       } else {
         toast.success("Menu Created Successfully.");
         router.push("/backoffice/menus");
@@ -84,7 +84,7 @@ export function UpdateMenuForm({
           <Box
             sx={{
               border: "1px solid lightgray",
-              px: 1.2,
+              px: 1,
               py: 1,
               borderRadius: 1,
               mb: 2,
