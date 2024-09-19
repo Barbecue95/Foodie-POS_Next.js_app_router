@@ -139,3 +139,38 @@ export async function getSelectedLocationTables() {
   const selectedLocationId = (await getSelectedLocations())?.locationId;
   return prisma.tables.findMany({ where: { locationId: selectedLocationId } });
 }
+
+export async function getCompanyByTableId(tableId: string) {
+  const table = await prisma.tables.findFirst({
+    where: { id: Number(tableId) },
+  });
+  const location = await prisma.locations.findFirst({
+    where: { id: table?.locationId },
+  });
+  return await prisma.company.findFirst({
+    where: { id: location?.companyId },
+  });
+}
+
+export async function getMenuCategoriesByTableId(tableId: string) {
+  const company = await getCompanyByTableId(tableId);
+  const menuCategories = await prisma.menuCategories.findMany({
+    where: { companyId: company?.id, isArchived: false },
+  });
+  const table = await prisma.tables.findFirst({
+    where: { id: Number(tableId) },
+  });
+  const location = await prisma.locations.findFirst({
+    where: { id: table?.locationId },
+  });
+  const disabledLocationMenuCategories =
+    await prisma.disabledLocationMenuCategories.findMany({
+      where: { locationId: location?.id },
+    });
+  const disabledLocationMenuCategoryIds = disabledLocationMenuCategories.map(
+    (item) => item.menuCategoryId
+  );
+  return menuCategories.filter(
+    (item) => !disabledLocationMenuCategoryIds.includes(item.id)
+  );
+}
