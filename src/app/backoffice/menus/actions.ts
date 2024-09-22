@@ -35,7 +35,11 @@ export async function getMenus() {
 export async function getMenu(id: number) {
   const menu = await prisma.menus.findFirst({
     where: { id },
-    include: { MenuCategoriesMenu: true, disabledLocationMenus: true },
+    include: {
+      MenuCategoriesMenu: true,
+      disabledLocationMenus: true,
+      menusAddonCategories: true,
+    },
   });
   if (!menu) return redirect("/backoffice/menus");
   return menu;
@@ -95,6 +99,7 @@ export async function createMenu(formData: FormData) {
 
 export async function updateMenu(formData: FormData) {
   try {
+    //Update Menus
     const { id, name, price } = UpdateMenuValidate.parse({
       id: Number(formData.get("id")),
       name: formData.get("name"),
@@ -104,6 +109,9 @@ export async function updateMenu(formData: FormData) {
     const imageUrl = formData.get("imageUrl") as string;
     const menuCategoryIds = formData
       .getAll("menuCategories")
+      .map((item) => Number(item));
+    const addonCategoryIds = formData
+      .getAll("addonCategories")
       .map((item) => Number(item));
     const menu = await prisma.menus.findFirst({ where: { id } });
     await prisma.menus.update({
@@ -118,22 +126,57 @@ export async function updateMenu(formData: FormData) {
       data: { name, price: Number(price) },
       where: { id: Number(id) },
     });
+
+    //Update MenuCategories
+
     const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
       where: { menuId: Number(id) },
     });
-    const menuMenuCategoryIds = menuCategoriesMenus.map((item) => item.id);
-    const isSame =
-      menuCategoryIds.length === menuMenuCategoryIds.length &&
+    const existingMenuCategoryIds = menuCategoriesMenus.map(
+      (item) => item.menuCategoryId
+    );
+    const isSameMenuCategoryIds =
+      menuCategoryIds.length === existingMenuCategoryIds.length &&
       menuCategoryIds.every((itemId: number) =>
-        menuMenuCategoryIds.includes(itemId)
+        existingMenuCategoryIds.includes(itemId)
       );
-    if (!isSame) {
+    if (!isSameMenuCategoryIds) {
+      await prisma.menuCategoriesMenus.deleteMany({
+        where: { menuId: Number(id) },
+      });
       const data = menuCategoryIds.map((menuCategoryId) => ({
         menuId: Number(id),
         menuCategoryId,
       }));
       await prisma.menuCategoriesMenus.createMany({ data });
     }
+
+    //Update AddonCategories
+
+    const menuAddonCategories = await prisma.menusAddonCategories.findMany({
+      where: { menuId: Number(id) },
+    });
+    const existingAddonCategoryIds = menuAddonCategories.map(
+      (item) => item.addonCategoryId
+    );
+    const isSameAddonCategoryIds =
+      addonCategoryIds.length === existingAddonCategoryIds.length &&
+      addonCategoryIds.every((itemId: number) =>
+        existingAddonCategoryIds.includes(itemId)
+      );
+    if (!isSameAddonCategoryIds) {
+      await prisma.menusAddonCategories.deleteMany({
+        where: { menuId: Number(id) },
+      });
+      const data = addonCategoryIds.map((addonCategoryId) => ({
+        menuId: Number(id),
+        addonCategoryId,
+      }));
+      await prisma.menusAddonCategories.createMany({ data });
+    }
+
+    //Update Disabled Locations
+
     const selectedLocationId = (await getSelectedLocations())?.locationId;
     if (!isAvailable) {
       await prisma.disabledLocationMenus.create({

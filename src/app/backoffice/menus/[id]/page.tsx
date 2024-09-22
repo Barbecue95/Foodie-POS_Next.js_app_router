@@ -1,4 +1,8 @@
-import { getCompanyMenuCategories, getSelectedLocations } from "@/libs/action";
+import {
+  getCompanyAddonCategories,
+  getCompanyMenuCategories,
+  getSelectedLocations,
+} from "@/libs/action";
 import { getMenu } from "../actions";
 import { UpdateMenuForm } from "./UpdateMenuForm";
 
@@ -17,15 +21,23 @@ export default async function MenuUpdatePage({ params }: Props) {
   )
     ? false
     : true;
-  const selected = menu?.MenuCategoriesMenu.map((item) => item.menuCategoryId);
+  const selectedMenuCategories = menu?.MenuCategoriesMenu.map(
+    (item) => item.menuCategoryId
+  );
   const menuCategories = await getCompanyMenuCategories();
+  const selectedAddonCategories = menu?.menusAddonCategories.map(
+    (item) => item.addonCategoryId
+  );
+  const addonCategories = await getCompanyAddonCategories();
 
   return (
     <UpdateMenuForm
       menu={menu}
       menuCategories={menuCategories}
       isAvailable={isAvailable}
-      selected={selected}
+      selectedMenuCategories={selectedMenuCategories}
+      addonCategories={addonCategories}
+      selectedAddonCategories={selectedAddonCategories}
     />
   );
 }

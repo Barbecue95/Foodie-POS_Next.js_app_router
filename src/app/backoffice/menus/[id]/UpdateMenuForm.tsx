@@ -8,24 +8,28 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { MenuCategories, Menus } from "@prisma/client";
+import { AddonCategories, MenuCategories, Menus } from "@prisma/client";
 import { upload } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
-  menuCategories: MenuCategories[];
   menu: Menus;
   isAvailable: boolean;
-  selected: number[];
+  menuCategories: MenuCategories[];
+  selectedMenuCategories: number[];
+  addonCategories: AddonCategories[];
+  selectedAddonCategories: number[];
 }
 
 export function UpdateMenuForm({
   menu,
-  menuCategories,
   isAvailable,
-  selected,
+  menuCategories,
+  selectedMenuCategories,
+  addonCategories,
+  selectedAddonCategories,
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -95,7 +99,9 @@ export function UpdateMenuForm({
                 key={menuCategory.id}
                 control={
                   <Checkbox
-                    defaultChecked={selected?.includes(menuCategory.id)}
+                    defaultChecked={selectedMenuCategories?.includes(
+                      menuCategory.id
+                    )}
                     name="menuCategories"
                     value={menuCategory.id}
                   />
@@ -104,9 +110,39 @@ export function UpdateMenuForm({
               />
             ))}
           </Box>
-          <Box sx={{ border: "1px solid lightgrey", p: 1, borderRadius: 1 }}>
-            <input type="file" name="file" />
+        </Box>
+        {
+          <Box>
+            <Typography>Addon categories</Typography>
+            <Box
+              sx={{
+                border: "1px solid lightgray",
+                px: 1,
+                py: 1,
+                borderRadius: 1,
+                mb: 2,
+              }}
+            >
+              {addonCategories.map((addonCategory) => (
+                <FormControlLabel
+                  key={addonCategory.id}
+                  control={
+                    <Checkbox
+                      defaultChecked={selectedAddonCategories?.includes(
+                        addonCategory.id
+                      )}
+                      name="addonCategories"
+                      value={addonCategory.id}
+                    />
+                  }
+                  label={addonCategory.name}
+                />
+              ))}
+            </Box>
           </Box>
+        }
+        <Box sx={{ border: "1px solid lightgrey", p: 1, borderRadius: 1 }}>
+          <input type="file" name="file" />
         </Box>
         <FormControlLabel
           control={<Checkbox defaultChecked={isAvailable} />}

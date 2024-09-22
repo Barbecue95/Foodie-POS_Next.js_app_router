@@ -156,6 +156,7 @@ export async function getMenuCategoriesByTableId(tableId: string) {
   const company = await getCompanyByTableId(tableId);
   const menuCategories = await prisma.menuCategories.findMany({
     where: { companyId: company?.id, isArchived: false },
+    include: { MenuCategoriesMenu: true },
   });
   const table = await prisma.tables.findFirst({
     where: { id: Number(tableId) },
