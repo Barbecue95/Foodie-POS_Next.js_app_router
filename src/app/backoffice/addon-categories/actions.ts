@@ -4,6 +4,7 @@ import { prisma } from "@/libs/prisma";
 import { redirect } from "next/navigation";
 
 export async function updateAddonCategory(formData: FormData) {
+  console.log(formData);
   const name = formData.get("name") as string;
   const isRequired = formData.get("isRequired");
   const id = formData.get("id");

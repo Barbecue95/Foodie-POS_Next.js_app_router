@@ -1,4 +1,3 @@
-import { getSelectedLocations } from "@/libs/action";
 import {
   Box,
   Card,
@@ -10,26 +9,24 @@ import {
 import Link from "next/link";
 
 interface Props {
-  menu: any;
+  href: string;
+  imageUrl: string;
+  name: string;
+  price: number;
+  showIsAvailable?: boolean;
+  isAvailable?: boolean;
 }
 
-export default async function MenuCard({ menu }: Props) {
-  const selectedLocation = await getSelectedLocations();
-  const { name, price } = menu;
-  const disabledLocationMenus = menu.disabledLocationMenus[0];
-  const isAvailable =
-    disabledLocationMenus &&
-    disabledLocationMenus.locationId === selectedLocation?.locationId
-      ? false
-      : true;
-  const imageUrl = menu.imageUrl
-    ? menu.imageUrl
-    : "https://images.squarespace-cdn.com/content/v1/5a81c36ea803bb1dd7807778/1610403788186-K2ATWJRYLHVC4ENCZZ7D/Shan+khaut+swe+%28Shan+sticky+noodles%29";
+export default function MenuCard({
+  href,
+  imageUrl,
+  name,
+  price,
+  showIsAvailable,
+  isAvailable,
+}: Props) {
   return (
-    <Link
-      href={`/backoffice/menus/${menu.id}`}
-      style={{ textDecoration: "none" }}
-    >
+    <Link href={href} style={{ textDecoration: "none" }}>
       <Card
         sx={{
           width: 285,
@@ -77,18 +74,20 @@ export default async function MenuCard({ menu }: Props) {
               }}
             />
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Chip
-              label={isAvailable ? "Available" : "Sold out"}
-              variant="outlined"
-              sx={{
-                fontWeight: "medium",
-                bgcolor: isAvailable ? "#DCFCE6" : "#E63946",
-                color: isAvailable ? "#1D3557" : "#F1FAEE",
-                border: 0,
-              }}
-            />
-          </Box>
+          {showIsAvailable && (
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Chip
+                label={isAvailable ? "Available" : "Sold out"}
+                variant="outlined"
+                sx={{
+                  fontWeight: "medium",
+                  bgcolor: isAvailable ? "#DCFCE6" : "#E63946",
+                  color: isAvailable ? "#1D3557" : "#F1FAEE",
+                  border: 0,
+                }}
+              />
+            </Box>
+          )}
         </CardContent>
       </Card>
     </Link>

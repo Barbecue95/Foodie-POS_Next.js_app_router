@@ -175,3 +175,20 @@ export async function getMenuCategoriesByTableId(tableId: string) {
     (item) => !disabledLocationMenuCategoryIds.includes(item.id)
   );
 }
+
+export async function getMenusByMenuCategoryIds(menuCategoryIds: number[]) {
+  const menuCategoriesMenus = await prisma.menuCategoriesMenus.findMany({
+    where: { menuCategoryId: { in: menuCategoryIds } },
+  });
+  const menuIds = menuCategoriesMenus.map((item) => item.menuId);
+  const menus = await prisma.menus.findMany({
+    where: { id: { in: menuIds }, isArchived: false },
+  });
+  const disabledLocationMenus = await prisma.disabledLocationMenus.findMany({
+    where: { menuId: { in: menuIds } },
+  });
+  const disabledLocationMenuIds = disabledLocationMenus.map(
+    (item) => item.menuId
+  );
+  return menus.filter((menu) => !disabledLocationMenuIds.includes(menu.id));
+}

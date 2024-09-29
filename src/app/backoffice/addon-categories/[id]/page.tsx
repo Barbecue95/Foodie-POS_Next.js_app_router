@@ -1,5 +1,11 @@
 import { prisma } from "@/libs/prisma";
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+} from "@mui/material";
 import { deleteAddonCategory, updateAddonCategory } from "../actions";
 
 interface Props {
@@ -29,18 +35,23 @@ export default async function AddonUpdate({ params }: Props) {
           position: "absolute",
         }}
       >
-        <TextField
-          sx={{ mb: 2 }}
-          defaultValue={addonCategories.name}
-          name="name"
-        />
+        <TextField defaultValue={addonCategories.name} name="name" />
         <input type="hidden" value={id} name="id" />
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked={addonCategories.isRequired}
+              name="isRequired"
+            />
+          }
+          label="Required"
+        />
         <Button type="submit" variant="contained" sx={{ width: 100 }}>
           Update
         </Button>
       </Box>
       <Box
-        sx={{ textAlign: "center", width: 500, mt: 10.3 }}
+        sx={{ textAlign: "center", width: 500, mt: 13.3 }}
         component={"form"}
         action={deleteAddonCategory}
       >

@@ -4,9 +4,10 @@ import Image from "next/image";
 
 interface Props {
   company: Company;
+  headerMenuImageUrl?: string;
 }
 
-export function OrderAppHeader({ company }: Props) {
+export function OrderAppHeader({ company, headerMenuImageUrl }: Props) {
   return (
     <Box sx={{ position: "relative" }}>
       <Box
@@ -29,6 +30,17 @@ export function OrderAppHeader({ company }: Props) {
         >
           {company?.name}
         </Typography>
+        <Image
+          src={headerMenuImageUrl || ""}
+          alt="menu-image"
+          width={150}
+          height={150}
+          style={{
+            borderRadius: "50%",
+            margin: "0 auto",
+            marginTop: 250,
+          }}
+        />
       </Box>
       <Box
         sx={{
@@ -48,27 +60,43 @@ export function OrderAppHeader({ company }: Props) {
         />
         <Box sx={{ position: "absolute" }}>
           <Box sx={{ textAlign: "center" }}>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                color: "#F1FAEE",
-                mt: { xs: 1, md: 2, lg: 4, xl: 10 },
-                fontSize: { sm: 25, md: 30, lg: 40 },
-              }}
-            >
-              {company?.name}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontStyle: "italic",
-                lineHeight: 1.2,
-                color: "#F1FAEE",
-                opacity: 0.7,
-              }}
-            >
-              {company?.name}
-            </Typography>
+            {headerMenuImageUrl ? (
+              <Image
+                src={headerMenuImageUrl}
+                alt="menu-image"
+                width={150}
+                height={150}
+                style={{
+                  borderRadius: "50%",
+                  margin: "0 auto",
+                  marginTop: 20,
+                }}
+              />
+            ) : (
+              <>
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#F1FAEE",
+                    mt: { xs: 1, md: 2, lg: 4, xl: 10 },
+                    fontSize: { sm: 25, md: 30, lg: 40 },
+                  }}
+                >
+                  {company?.name}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontStyle: "italic",
+                    lineHeight: 1.2,
+                    color: "#F1FAEE",
+                    opacity: 0.7,
+                  }}
+                >
+                  {company?.name}
+                </Typography>
+              </>
+            )}
           </Box>
         </Box>
       </Box>

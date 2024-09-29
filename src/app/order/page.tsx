@@ -1,6 +1,10 @@
 import { MenuCategoryTabs } from "@/components/MenuCategoryTabs";
 import { OrderAppHeader } from "@/components/OrderAppHeader";
-import { getCompanyByTableId, getMenuCategoriesByTableId } from "@/libs/action";
+import {
+  getCompanyByTableId,
+  getMenuCategoriesByTableId,
+  getMenusByMenuCategoryIds,
+} from "@/libs/action";
 import { Box } from "@mui/material";
 import { Prisma } from "@prisma/client";
 
@@ -19,6 +23,9 @@ export default async function Order({ searchParams }: Props) {
   const menuCategories: menuCategoriesType[] = await getMenuCategoriesByTableId(
     searchParams.tableId
   );
+  const menuCategoryIds = menuCategories.map((item) => item.id);
+
+  const menus = await getMenusByMenuCategoryIds(menuCategoryIds);
 
   if (!company) return null;
   return (
@@ -27,6 +34,7 @@ export default async function Order({ searchParams }: Props) {
       <MenuCategoryTabs
         tableId={searchParams.tableId}
         menuCategories={menuCategories}
+        menus={menus}
       />
     </Box>
   );

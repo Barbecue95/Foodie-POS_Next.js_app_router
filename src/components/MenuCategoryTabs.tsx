@@ -2,18 +2,29 @@
 
 import { menuCategoriesType } from "@/app/order/page";
 import { Box, Tab, Tabs } from "@mui/material";
-import { MenuCategories } from "@prisma/client";
-import { useState } from "react";
+import { Menus } from "@prisma/client";
+import { useEffect, useState } from "react";
+import MenuCard from "./MenuCard";
 
 interface Props {
   menuCategories: menuCategoriesType[];
   tableId: string;
+  menus: Menus[];
 }
 
-export function MenuCategoryTabs({ menuCategories, tableId }: Props) {
+export function MenuCategoryTabs({ menus, menuCategories, tableId }: Props) {
+  const [menusToShow, setMenusToShow] = useState<Menus[]>([]);
   const [value, setValue] = useState(0);
   const [selectedMenuCategory, setSelectedMenuCategory] =
-    useState<MenuCategories>(menuCategories[0]);
+    useState<menuCategoriesType>(menuCategories[0]);
+
+  useEffect(() => {
+    const menuIds = selectedMenuCategory.MenuCategoriesMenu.map(
+      (item) => item.menuId
+    );
+    const menusToShow = menus.filter((menu) => menuIds.includes(menu.id));
+    setMenusToShow(menusToShow);
+  }, [selectedMenuCategory]);
 
   return (
     <Box
@@ -22,9 +33,6 @@ export function MenuCategoryTabs({ menuCategories, tableId }: Props) {
         top: { md: -10, lg: -110 },
         maxWidth: "800px",
         margin: "0 auto",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
       }}
     >
       <Tabs
@@ -49,6 +57,20 @@ export function MenuCategoryTabs({ menuCategories, tableId }: Props) {
           />
         ))}
       </Tabs>
+      <Box sx={{ display: "flex", flexWrap: "wrap", mt: 2 }}>
+        {menusToShow.map((menu) => {
+          const { id, name, price, imageUrl } = menu;
+          return (
+            <MenuCard
+              key={id}
+              name={name}
+              price={price}
+              href={`/order/menus/${id}?tableId=${tableId}`}
+              imageUrl={imageUrl as string}
+            />
+          );
+        })}
+      </Box>
     </Box>
   );
 }
