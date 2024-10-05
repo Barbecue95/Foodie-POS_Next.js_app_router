@@ -140,7 +140,7 @@ export async function getSelectedLocationTables() {
   return prisma.tables.findMany({ where: { locationId: selectedLocationId } });
 }
 
-export async function getCompanyByTableId(tableId: string) {
+export async function getCompanyByTableId(tableId: number) {
   const table = await prisma.tables.findFirst({
     where: { id: Number(tableId) },
   });
@@ -153,7 +153,7 @@ export async function getCompanyByTableId(tableId: string) {
 }
 
 export async function getMenuCategoriesByTableId(tableId: string) {
-  const company = await getCompanyByTableId(tableId);
+  const company = await getCompanyByTableId(Number(tableId));
   const menuCategories = await prisma.menuCategories.findMany({
     where: { companyId: company?.id, isArchived: false },
     include: { MenuCategoriesMenu: true },

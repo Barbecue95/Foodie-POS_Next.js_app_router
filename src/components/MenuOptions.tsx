@@ -1,5 +1,6 @@
 "use client";
 
+import { createCartOrder } from "@/app/order/cart/action";
 import { OrdersWithOrdersAddons } from "@/app/order/menus/[id]/page";
 import { Box, Button } from "@mui/material";
 import {
@@ -15,7 +16,7 @@ interface Props {
   menu: Menus;
   addonCategories: AddonCategoriesType[];
   addons: Addons[];
-  tableId: string;
+  tableId: number;
   order?: OrdersWithOrdersAddons | null;
 }
 
@@ -45,18 +46,6 @@ export function MenuOptions({
     setIsDisabled(isDisabled);
   }, [selectedAddons, addonCategories]);
 
-  /*   useEffect(() => {
-    if (order) {
-      const { quantity, OrdersAddons } = order;
-      const addonIds = OrdersAddons.map((item) => item.addonId);
-      const selectedAddons = addons.filter((addon) =>
-        addonIds.includes(addon.id)
-      );
-      setSelectedAddons(selectedAddons);
-      setQuantity(quantity);
-    }
-  }, [order]); */
-
   const handleQuantityIncrease = () => {
     const newValue = quantity + 1;
     setQuantity(newValue);
@@ -67,15 +56,14 @@ export function MenuOptions({
     setQuantity(newValue);
   };
 
-  /*   const handleCreateOrUpdateCartOrder = async () => {
+  const handleCreateOrUpdateCartOrder = async () => {
     await createCartOrder({
       menuId: menu.id,
       addonIds: selectedAddons.map((item) => item.id),
       quantity,
       tableId,
-      orderId: order?.id,
     });
-  }; */
+  };
 
   return (
     <Box
@@ -105,7 +93,7 @@ export function MenuOptions({
       <Button
         variant="contained"
         disabled={isDisabled}
-        // onClick={handleCreateOrUpdateCartOrder}
+        onClick={handleCreateOrUpdateCartOrder}
         sx={{
           width: "fit-content",
           mt: 2,

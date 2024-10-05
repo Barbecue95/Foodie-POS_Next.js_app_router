@@ -23,7 +23,8 @@ export type OrdersWithOrdersAddons = Prisma.OrdersGetPayload<{
 }>;
 
 export default async function MenuDetailPage({ params, searchParams }: Props) {
-  const company = await getCompanyByTableId(searchParams.tableId);
+  const tableId = Number(searchParams.tableId);
+  const company = await getCompanyByTableId(tableId);
   const menu = await prisma.menus.findFirst({
     where: { id: Number(params.id) },
     include: { menusAddonCategories: true },
@@ -37,7 +38,6 @@ export default async function MenuDetailPage({ params, searchParams }: Props) {
   const addons = await prisma.addons.findMany({
     where: { addonCategoryId: { in: addonCategoryIds } },
   });
-  console.log("addonCategories: ", addonCategories);
 
   if (!menu || !company) return null;
   return (
@@ -50,7 +50,7 @@ export default async function MenuDetailPage({ params, searchParams }: Props) {
         menu={menu}
         addonCategories={addonCategories}
         addons={addons}
-        tableId={searchParams.tableId}
+        tableId={tableId}
       />
     </Box>
   );

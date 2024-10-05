@@ -2,6 +2,7 @@
 
 import { getSelectedLocations } from "@/libs/action";
 import { prisma } from "@/libs/prisma";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -206,6 +207,7 @@ export async function updateMenu(formData: FormData) {
       ],
     };
   }
+  revalidatePath("/backoffice/menus");
   return { errors: null };
 }
 
