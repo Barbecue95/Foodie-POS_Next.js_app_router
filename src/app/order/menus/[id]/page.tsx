@@ -53,6 +53,7 @@ export default async function MenuDetailPage({ params, searchParams }: Props) {
       <OrderAppHeader
         company={company}
         headerMenuImageUrl={menu.imageUrl as string}
+        tableId={Number(tableId)}
       />
       <MenuOptions
         menu={menu}

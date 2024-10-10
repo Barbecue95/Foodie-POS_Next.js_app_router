@@ -1,6 +1,6 @@
 "use server";
 
-import { Orders, ORDERSTATUS } from "@prisma/client";
+import { Orders, ORDERSTATUS, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -11,6 +11,10 @@ interface CreateCartOrder {
   tableId: number;
   orderId?: number;
 }
+
+type OrdersWithOrdersAddonsAndMenus = Prisma.OrdersGetPayload<{
+  include: { ordersAddons: true; menu: true };
+}>;
 
 export async function createCartOrder(payload: CreateCartOrder) {
   const { menuId, addonIds, quantity, tableId, orderId } = payload;
@@ -48,11 +52,23 @@ export async function createCartOrder(payload: CreateCartOrder) {
   redirect(`/order?tableId=${tableId}`);
 }
 
-export async function getTableTotalPrice(tableId: number) {
-  const cartOrders = await prisma.orders.findMany({
-    where: { tableId, status: ORDERSTATUS.CART },
-    include: { ordersAddons: true, menu: true },
-  });
+export async function getTableTotalPrice(
+  tableId: number,
+  status?: ORDERSTATUS
+) {
+  let cartOrders: OrdersWithOrdersAddonsAndMenus[] = [];
+  if (status) {
+    cartOrders = await prisma.orders.findMany({
+      where: { tableId, status },
+      include: { ordersAddons: true, menu: true },
+    });
+  } else {
+    cartOrders = await prisma.orders.findMany({
+      where: { tableId },
+      include: { ordersAddons: true, menu: true },
+    });
+  }
+
   let totalPrice = 0;
   for (const cartOrder of cartOrders) {
     totalPrice += cartOrder.menu.price;
@@ -79,4 +95,20 @@ export async function deleteCartOrder(formData: FormData) {
   }
   await prisma.orders.delete({ where: { id: Number(id) } });
   revalidatePath("/order/cart");
+}
+
+export async function confirmCartOrder(formData: FormData) {
+  const tableId = formData.get("tableId");
+  if (!tableId) return;
+  const orders = await prisma.orders.findMany({
+    where: { tableId: Number(tableId), status: ORDERSTATUS.CART },
+  });
+  for (const order of orders) {
+    await prisma.orders.update({
+      data: { status: ORDERSTATUS.PENDING },
+      where: { id: order.id },
+    });
+  }
+  revalidatePath("/order/cart");
+  redirect(`/order/active-order?tableId=${tableId}`);
 }

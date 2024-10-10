@@ -1,14 +1,8 @@
 import { ArrowBack } from "@mui/icons-material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SendIcon from "@mui/icons-material/Send";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { ORDERSTATUS } from "@prisma/client";
 import Link from "next/link";
-import {
-  confirmCartOrder,
-  deleteCartOrder,
-  getTableTotalPrice,
-} from "./action";
+import { getTableTotalPrice } from "../cart/action";
 
 interface Props {
   searchParams: {
@@ -16,10 +10,10 @@ interface Props {
   };
 }
 
-export default async function CartPage({ searchParams }: Props) {
+export default async function ActiveOrderPage({ searchParams }: Props) {
   const tableId = Number(searchParams.tableId);
   const cartOrders = await prisma.orders.findMany({
-    where: { tableId, status: ORDERSTATUS.CART },
+    where: { tableId, NOT: { status: ORDERSTATUS.CART } },
     include: { menu: true },
   });
   if (!cartOrders.length)
@@ -35,7 +29,7 @@ export default async function CartPage({ searchParams }: Props) {
           gap: 4,
         }}
       >
-        <Typography variant="h3">Your Cart is Empty.</Typography>
+        <Typography variant="h3">You Haven't Ordered Yet.</Typography>
         <Link href={`/order?tableId=${tableId}`}>
           <Button variant="contained" sx={{ p: 2, borderRadius: 15 }}>
             <ArrowBack />
@@ -97,54 +91,14 @@ export default async function CartPage({ searchParams }: Props) {
                   );
                 })}
               </Box>
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-                <Link
-                  href={`/order/menus/${cartOrder.menuId}?tableId=${cartOrder.tableId}&orderId=${cartOrder.id}`}
-                >
-                  <Button
-                    variant={"outlined"}
-                    startIcon={<SendIcon />}
-                    size={"small"}
-                  >
-                    Edit
-                  </Button>
-                </Link>
-                <Box component={"form"} action={deleteCartOrder}>
-                  <input type="hidden" name="id" value={cartOrder.id} />
-                  <Button
-                    variant={"outlined"}
-                    startIcon={<DeleteIcon />}
-                    color={"error"}
-                    size={"small"}
-                    type={"submit"}
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </Box>
             </Box>
           );
         })}
         <Divider sx={{ borderBottomWidth: 3, mb: 3 }} />
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Typography variant="h5">
-            Total Price : {getTableTotalPrice(tableId, ORDERSTATUS.CART)}
+            Total Price : {getTableTotalPrice(tableId)}
           </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mt: 5,
-          }}
-          component={"form"}
-          action={confirmCartOrder}
-        >
-          <input type="hidden" defaultValue={tableId} name="tableId" />
-          <Button variant="contained" type={"submit"}>
-            Confirm Order
-          </Button>
         </Box>
       </Box>
     </Box>

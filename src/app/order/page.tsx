@@ -19,7 +19,8 @@ export type menuCategoriesType = Prisma.MenuCategoriesGetPayload<{
 }>;
 
 export default async function Order({ searchParams }: Props) {
-  const company = await getCompanyByTableId(searchParams.tableId);
+  const tableId = Number(searchParams.tableId);
+  const company = await getCompanyByTableId(tableId);
   const menuCategories: menuCategoriesType[] = await getMenuCategoriesByTableId(
     searchParams.tableId
   );
@@ -30,9 +31,9 @@ export default async function Order({ searchParams }: Props) {
   if (!company) return null;
   return (
     <Box>
-      <OrderAppHeader company={company} />
+      <OrderAppHeader company={company} tableId={tableId} />
       <MenuCategoryTabs
-        tableId={searchParams.tableId}
+        tableId={tableId}
         menuCategories={menuCategories}
         menus={menus}
       />

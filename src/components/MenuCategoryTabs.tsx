@@ -8,7 +8,7 @@ import MenuCard from "./MenuCard";
 
 interface Props {
   menuCategories: menuCategoriesType[];
-  tableId: string;
+  tableId: number;
   menus: Menus[];
 }
 
