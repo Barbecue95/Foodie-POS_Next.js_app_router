@@ -1,5 +1,7 @@
 "use server";
 
+import { ORDERSTATUS } from "@prisma/client";
+
 export async function getTableTotalPriceByOrderId(orderId: number) {
   const order = await prisma.orders.findFirst({
     where: { id: orderId },
@@ -23,4 +25,8 @@ export async function getTableTotalPriceByOrderId(orderId: number) {
   }
   //return totalprice multiplying with order quantitites
   return totalPrice * order.quantity;
+}
+
+export async function updateOrderStatus(orderId: number, status: ORDERSTATUS) {
+  await prisma.orders.update({ data: { status }, where: { id: orderId } });
 }

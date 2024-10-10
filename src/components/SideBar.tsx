@@ -1,3 +1,4 @@
+"use client";
 import CategoryIcon from "@mui/icons-material/Category";
 import ClassIcon from "@mui/icons-material/Class";
 import EggIcon from "@mui/icons-material/Egg";
@@ -15,13 +16,15 @@ import {
   ListItemText,
 } from "@mui/material";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const sideBarItems = [
   {
     id: 1,
     label: "Orders",
     icon: <LocalMallIcon />,
-    route: "/backoffice",
+    route: "/backoffice/orders/pending",
+    pathname: "orders",
   },
 
   {
@@ -29,6 +32,7 @@ const sideBarItems = [
     label: "Menu Categories",
     icon: <CategoryIcon />,
     route: "/backoffice/menu-categories",
+    pathname: "menu-categories",
   },
 
   {
@@ -36,6 +40,7 @@ const sideBarItems = [
     label: "Menus",
     icon: <LocalDiningIcon />,
     route: "/backoffice/menus",
+    pathname: "menus",
   },
 
   {
@@ -43,6 +48,7 @@ const sideBarItems = [
     label: "Addon Categories",
     icon: <ClassIcon />,
     route: "/backoffice/addon-categories",
+    pathname: "addon-categories",
   },
 
   {
@@ -50,6 +56,7 @@ const sideBarItems = [
     label: "Addons",
     icon: <EggIcon />,
     route: "/backoffice/addons",
+    pathname: "addons",
   },
 
   {
@@ -57,6 +64,7 @@ const sideBarItems = [
     label: "Tables",
     icon: <TableBarIcon />,
     route: "/backoffice/tables",
+    pathname: "tables",
   },
 
   {
@@ -64,6 +72,7 @@ const sideBarItems = [
     label: "Locations",
     icon: <LocationOnIcon />,
     route: "/backoffice/locations",
+    pathname: "locations",
   },
 
   {
@@ -71,10 +80,13 @@ const sideBarItems = [
     label: "Settings",
     icon: <SettingsIcon />,
     route: "/backoffice/settings",
+    pathname: "settings",
   },
 ];
 
 export function SideBar() {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <Box
       sx={{
@@ -93,6 +105,9 @@ export function SideBar() {
             <ListItem
               disablePadding
               sx={{
+                backgroundColor: pathname.includes(item.pathname)
+                  ? "#457B9D"
+                  : null,
                 ":hover": { backgroundColor: "#457B9D" },
               }}
             >

@@ -70,7 +70,6 @@ export default async function OrdersWithStatusPage({ params }: Props) {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-around",
           mt: 4,
         }}
       >

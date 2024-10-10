@@ -52,12 +52,11 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
           margin: "0 auto",
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-between",
+
           mb: 3,
         }}
       >
         {orders.map(async (order) => {
-          const { id, menu, quantity } = order;
           const addonIds = order.ordersAddons.map((item) => item.addonId);
           const addons = await prisma.addons.findMany({
             where: { id: { in: addonIds } },

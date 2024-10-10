@@ -1,8 +1,16 @@
 "use client";
 
-import { Box, MenuItem, Select, Typography } from "@mui/material";
+import { updateOrderStatus } from "@/app/backoffice/orders/[status]/action";
+import {
+  Box,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { Orders, ORDERSTATUS } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface Props {
   order: Orders;
@@ -12,12 +20,13 @@ interface Props {
 export function OrderStatusUpdate({ order, isAdmin }: Props) {
   const router = useRouter();
 
-  /*   useEffect(() => {
+  useEffect(() => {
     if (order.status !== ORDERSTATUS.COMPLETE) {
-      const intervalId = setInterval(() => {
+      const setIntervalId = setInterval(() => {
         router.refresh();
-      }, 5000);
-      return () => clearInterval(intervalId);
+      }, 3000);
+      //clean up function
+      return () => clearInterval(setIntervalId);
     }
   }, [order]);
 
@@ -25,7 +34,7 @@ export function OrderStatusUpdate({ order, isAdmin }: Props) {
     evt: SelectChangeEvent<"CART" | "PENDING" | "COOKING" | "COMPLETE">
   ) => {
     await updateOrderStatus(order.id, evt.target.value as ORDERSTATUS);
-  }; */
+  };
 
   return (
     <Box
@@ -43,7 +52,7 @@ export function OrderStatusUpdate({ order, isAdmin }: Props) {
           <Select
             value={order.status}
             sx={{ maxHeight: 30 }}
-            /* onChange={handleOrderStatusUpdate} */
+            onChange={handleOrderStatusUpdate}
           >
             <MenuItem value={ORDERSTATUS.PENDING}>
               {ORDERSTATUS.PENDING}
