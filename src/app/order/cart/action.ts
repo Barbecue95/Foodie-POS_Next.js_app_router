@@ -1,6 +1,6 @@
 "use server";
 
-import { ORDERSTATUS } from "@prisma/client";
+import { Orders, ORDERSTATUS } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -9,18 +9,32 @@ interface CreateCartOrder {
   addonIds: number[];
   quantity: number;
   tableId: number;
+  orderId?: number;
 }
 
 export async function createCartOrder(payload: CreateCartOrder) {
-  const { menuId, addonIds, quantity, tableId } = payload;
-  const order = await prisma.orders.create({
-    data: {
-      menuId,
-      tableId,
-      quantity,
-    },
-  });
-
+  const { menuId, addonIds, quantity, tableId, orderId } = payload;
+  let order: Orders;
+  if (orderId) {
+    const orderAddons = await prisma.ordersAddons.findMany({
+      where: { orderId },
+    });
+    if (orderAddons.length) {
+      await prisma.ordersAddons.deleteMany({ where: { orderId } });
+    }
+    order = await prisma.orders.update({
+      data: { quantity },
+      where: { id: orderId },
+    });
+  } else {
+    order = await prisma.orders.create({
+      data: {
+        menuId,
+        tableId,
+        quantity,
+      },
+    });
+  }
   if (addonIds.length) {
     for (const addonId of addonIds) {
       await prisma.ordersAddons.create({
@@ -31,7 +45,7 @@ export async function createCartOrder(payload: CreateCartOrder) {
       });
     }
   }
-  redirect(`/order/cart?tableId=${tableId}`);
+  redirect(`/order?tableId=${tableId}`);
 }
 
 export async function getTableTotalPrice(tableId: number) {

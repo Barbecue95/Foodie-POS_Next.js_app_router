@@ -74,6 +74,7 @@ export function MenuOptions({
       addonIds: selectedAddons.map((item) => item.id),
       quantity,
       tableId,
+      orderId: order?.id,
     });
   };
 
