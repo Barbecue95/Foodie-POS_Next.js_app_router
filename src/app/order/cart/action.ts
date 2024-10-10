@@ -71,15 +71,16 @@ export async function getTableTotalPrice(
 
   let totalPrice = 0;
   for (const cartOrder of cartOrders) {
-    totalPrice += cartOrder.menu.price;
+    let orderPrice = cartOrder.menu.price || 0;
     const orderAddons = cartOrder.ordersAddons;
     for (const orderAddon of orderAddons) {
       const addonId = orderAddon.addonId;
       const addon = await prisma.addons.findFirst({ where: { id: addonId } });
       if (addon) {
-        totalPrice += addon.price;
+        orderPrice += addon.price;
       }
     }
+    totalPrice += orderPrice * cartOrder.quantity;
   }
   return totalPrice;
 }

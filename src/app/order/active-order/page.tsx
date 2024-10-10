@@ -1,3 +1,5 @@
+import { OrdersWithMenusTablesOrderAddons } from "@/app/backoffice/orders/[status]/page";
+import OrderCard from "@/components/OrderCard";
 import { ArrowBack } from "@mui/icons-material";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { ORDERSTATUS } from "@prisma/client";
@@ -12,11 +14,12 @@ interface Props {
 
 export default async function ActiveOrderPage({ searchParams }: Props) {
   const tableId = Number(searchParams.tableId);
-  const cartOrders = await prisma.orders.findMany({
-    where: { tableId, NOT: { status: ORDERSTATUS.CART } },
-    include: { menu: true },
-  });
-  if (!cartOrders.length)
+  const orders: OrdersWithMenusTablesOrderAddons[] =
+    await prisma.orders.findMany({
+      where: { tableId, NOT: { status: ORDERSTATUS.CART } },
+      include: { menu: true, ordersAddons: true, table: true },
+    });
+  if (!orders.length)
     return (
       <Box
         sx={{
@@ -40,66 +43,34 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
     );
   return (
     <Box sx={{ pt: 2 }}>
-      <Box sx={{ maxWidth: 600, margin: "0 auto" }}>
-        {cartOrders.map(async (cartOrder) => {
-          const { id, menu, quantity } = cartOrder;
-          const orderAddons = await prisma.ordersAddons.findMany({
-            where: { orderId: id },
-            include: { addon: true },
+      <h1 style={{ textAlign: "center", paddingBottom: 10 }}>
+        Your Orders List
+      </h1>
+      <Box
+        sx={{
+          maxWidth: 1300,
+          margin: "0 auto",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          mb: 3,
+        }}
+      >
+        {orders.map(async (order) => {
+          const { id, menu, quantity } = order;
+          const addonIds = order.ordersAddons.map((item) => item.addonId);
+          const addons = await prisma.addons.findMany({
+            where: { id: { in: addonIds } },
+            include: { addonCategory: true },
           });
-          const addons = orderAddons.map((item) => item.addon);
-          return (
-            <Box key={cartOrder.id} sx={{ mb: 5 }}>
-              <Box
-                key={cartOrder.id}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography
-                    sx={{
-                      width: 30,
-                      height: 30,
-                      bgcolor: "#669bbc",
-                      borderRadius: "50%",
-                      color: "white",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      mr: 2,
-                    }}
-                  >
-                    {quantity}
-                  </Typography>
-                  <Typography>{menu.name}</Typography>
-                </Box>
-                <Typography>{menu.price}</Typography>
-              </Box>
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 6 }}>
-                {addons.map((addon) => {
-                  return (
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                      fontStyle={"italic"}
-                    >
-                      <Typography>{addon.name}</Typography>
-                      <Typography>{addon.price}</Typography>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Box>
-          );
+          return <OrderCard order={order} addons={addons} />;
         })}
-        <Divider sx={{ borderBottomWidth: 3, mb: 3 }} />
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Typography variant="h5">
-            Total Price : {getTableTotalPrice(tableId)}
-          </Typography>
-        </Box>
+      </Box>
+      <Divider sx={{ borderBottomWidth: 3, mb: 3 }} />
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Typography variant="h4">
+          Total Price : {getTableTotalPrice(tableId)}
+        </Typography>
       </Box>
     </Box>
   );
