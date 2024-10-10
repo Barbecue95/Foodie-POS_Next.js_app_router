@@ -46,6 +46,18 @@ export function MenuOptions({
     setIsDisabled(isDisabled);
   }, [selectedAddons, addonCategories]);
 
+  useEffect(() => {
+    if (order) {
+      const { quantity, ordersAddons } = order;
+      setQuantity(quantity);
+      const addonIds = ordersAddons.map((item) => item.addonId);
+      const selectedAddons = addons.filter((addon) =>
+        addonIds.includes(addon.id)
+      );
+      setSelectedAddons(selectedAddons);
+    }
+  }, [order]);
+
   const handleQuantityIncrease = () => {
     const newValue = quantity + 1;
     setQuantity(newValue);

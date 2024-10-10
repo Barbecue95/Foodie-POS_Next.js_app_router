@@ -1,6 +1,7 @@
 "use server";
 
 import { ORDERSTATUS } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 interface CreateCartOrder {
@@ -51,4 +52,17 @@ export async function getTableTotalPrice(tableId: number) {
     }
   }
   return totalPrice;
+}
+
+export async function deleteCartOrder(formData: FormData) {
+  const id = formData.get("id");
+  if (!id) return;
+  const orderAddons = await prisma.ordersAddons.findMany({
+    where: { orderId: Number(id) },
+  });
+  if (orderAddons.length) {
+    await prisma.ordersAddons.deleteMany({ where: { orderId: Number(id) } });
+  }
+  await prisma.orders.delete({ where: { id: Number(id) } });
+  revalidatePath("/order/cart");
 }

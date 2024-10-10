@@ -1,5 +1,8 @@
-import { Box, Divider, Typography } from "@mui/material";
-import { getTableTotalPrice } from "./action";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
+import { Box, Button, Divider, Typography } from "@mui/material";
+import Link from "next/link";
+import { deleteCartOrder, getTableTotalPrice } from "./action";
 
 interface Props {
   searchParams: {
@@ -66,6 +69,31 @@ export default async function CartPage({ searchParams }: Props) {
                     </Box>
                   );
                 })}
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+                <Link
+                  href={`/order/menus/${cartOrder.menuId}?tableId=${cartOrder.tableId}&orderId=${cartOrder.id}`}
+                >
+                  <Button
+                    variant={"outlined"}
+                    startIcon={<SendIcon />}
+                    size={"small"}
+                  >
+                    Edit
+                  </Button>
+                </Link>
+                <Box component={"form"} action={deleteCartOrder}>
+                  <input type="hidden" name="id" value={cartOrder.id} />
+                  <Button
+                    variant={"outlined"}
+                    startIcon={<DeleteIcon />}
+                    color={"error"}
+                    size={"small"}
+                    type={"submit"}
+                  >
+                    Delete
+                  </Button>
+                </Box>
               </Box>
             </Box>
           );
