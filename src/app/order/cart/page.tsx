@@ -1,3 +1,4 @@
+import { prisma } from "@/libs/prisma";
 import { ArrowBack } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";

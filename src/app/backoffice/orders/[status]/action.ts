@@ -1,5 +1,6 @@
 "use server";
 
+import { prisma } from "@/libs/prisma";
 import { ORDERSTATUS } from "@prisma/client";
 
 export async function getTableTotalPriceByOrderId(orderId: number) {

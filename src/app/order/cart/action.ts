@@ -1,5 +1,6 @@
 "use server";
 
+import { prisma } from "@/libs/prisma";
 import { Orders, ORDERSTATUS, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
