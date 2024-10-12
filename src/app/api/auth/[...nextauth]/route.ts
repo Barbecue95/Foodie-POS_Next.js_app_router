@@ -17,10 +17,10 @@ const authOptions = {
     }),
   ],
   pages: {
-    signIn: "/auth/signIn",
+    signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn({ user }: any) {
+    async signIn({ user }: Props) {
       const dbUser = await prisma.users.findFirst({
         where: { email: user.email as string },
       });
