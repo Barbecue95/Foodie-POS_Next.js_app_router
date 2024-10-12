@@ -32,7 +32,7 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
           gap: 4,
         }}
       >
-        <Typography variant="h3">You Haven't Ordered Yet.</Typography>
+        <Typography variant="h3">You Have not Ordered Yet.</Typography>
         <Link href={`/order?tableId=${tableId}`}>
           <Button variant="contained" sx={{ p: 2, borderRadius: 15 }}>
             <ArrowBack />
@@ -62,7 +62,7 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
             where: { id: { in: addonIds } },
             include: { addonCategory: true },
           });
-          return <OrderCard order={order} addons={addons} />;
+          return <OrderCard key={order.id} order={order} addons={addons} />;
         })}
       </Box>
       <Divider sx={{ borderBottomWidth: 3, mb: 3 }} />

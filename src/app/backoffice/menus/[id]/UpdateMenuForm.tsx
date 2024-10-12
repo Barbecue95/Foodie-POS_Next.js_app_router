@@ -62,7 +62,16 @@ export function UpdateMenuForm({
     <>
       <Box
         component={"form"}
-        action={deleteMenu}
+        onSubmit={async (e) => {
+          e.preventDefault(); // Prevent the default form submission
+
+          const formData = new FormData(e.currentTarget); // Create FormData from the form
+          const result = await deleteMenu(formData); // Pass formData to deleteMenu
+
+          if (result?.error) {
+            console.error(result.error); // Handle the error if any
+          }
+        }}
         sx={{ display: "flex", justifyContent: "flex-end" }}
       >
         <input hidden defaultValue={menu.id} name="id" />

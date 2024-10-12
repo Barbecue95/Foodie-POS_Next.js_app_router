@@ -90,6 +90,7 @@ export default async function CartPage({ searchParams }: Props) {
                     <Box
                       sx={{ display: "flex", justifyContent: "space-between" }}
                       fontStyle={"italic"}
+                      key={addon.id}
                     >
                       <Typography>{addon.name}</Typography>
                       <Typography>{addon.price}</Typography>

@@ -215,7 +215,9 @@ export async function deleteMenu(formData: FormData) {
   try {
     const { id } = deleteMenuValid.parse({ id: Number(formData.get("id")) });
     await prisma.menuCategoriesMenus.deleteMany({ where: { menuId: id } });
-    await prisma.menusAddonCategories.deleteMany({ where: { menuId: id } });
+    await prisma.menusAddonCategories.deleteMany({
+      where: { menuId: Number(id) },
+    });
     await prisma.menus.update({ data: { isArchived: true }, where: { id } });
   } catch (err) {
     if (err instanceof z.ZodError) {

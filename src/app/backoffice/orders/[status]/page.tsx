@@ -81,7 +81,9 @@ export default async function OrdersWithStatusPage({ params }: Props) {
               where: { id: { in: addonIds } },
               include: { addonCategory: true },
             });
-          return <OrderCard order={order} addons={addons} isAdmin />;
+          return (
+            <OrderCard key={order.id} order={order} addons={addons} isAdmin />
+          );
         })}
       </Box>
     </Box>
