@@ -37,7 +37,7 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
         <Link href={`/order?tableId=${tableId}`}>
           <Button variant="contained" sx={{ p: 2, borderRadius: 15 }}>
             <ArrowBack />
-            Start Order Now
+            Order Now
           </Button>
         </Link>
       </Box>
