@@ -9,7 +9,7 @@ interface Props {
   user: User | AdapterUser;
 }
 
-export const authOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: config.googleClientId,
