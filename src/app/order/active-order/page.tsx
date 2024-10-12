@@ -1,5 +1,6 @@
 import { OrdersWithMenusTablesOrderAddons } from "@/app/backoffice/orders/[status]/page";
 import OrderCard from "@/components/OrderCard";
+import { prisma } from "@/libs/prisma";
 import { ArrowBack } from "@mui/icons-material";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { ORDERSTATUS } from "@prisma/client";
@@ -36,7 +37,7 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
         <Link href={`/order?tableId=${tableId}`}>
           <Button variant="contained" sx={{ p: 2, borderRadius: 15 }}>
             <ArrowBack />
-            Start Order Now
+            Order Now
           </Button>
         </Link>
       </Box>
