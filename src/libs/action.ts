@@ -32,7 +32,11 @@ export async function createDefaultData(nextUser: User) {
     where: { id: table.id },
   });
   const menu = await prisma.menus.create({
-    data: { name: "Shan Khout Swell" },
+    data: {
+      name: "Shan Khout Swell",
+      imageUrl:
+        "https://b1435806.smushcdn.com/1435806/wp-content/uploads/2018/01/menu.png?lossy=1&strip=1&webp=1",
+    },
   });
   const menuCategory = await prisma.menuCategories.create({
     data: { name: "Most Popular", companyId: company.id },
