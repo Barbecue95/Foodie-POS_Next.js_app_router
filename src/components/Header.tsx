@@ -53,7 +53,7 @@ const Header = () => {
           mt: 4,
         }}
       >
-        Foodie POS (Staging Page)
+        Foodie POS (Staging Page!!)
       </Typography>
     </Box>
   );
